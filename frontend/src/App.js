@@ -1,21 +1,15 @@
-// import { Routes, Route, Link } from "react-router-dom";
-import logo from "./logo.svg";
+import { Routes, Route } from "react-router-dom";
 import "./App.css";
+
+// pages
+import LoginOrRegister from "./components/LoginOrRegister/LoginOrRegister";
 
 function App() {
     return (
-        <div className="App">
-            <header className="App-header">
-                <img src={logo} className="App-logo" alt="logo" />
-                <p>
-                    Edit <code>src/App.js</code> and save to reload.
-                </p>
-                {/* <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="about" element={<About />} />
-        </Routes> */}
-            </header>
-        </div>
+        <Routes>
+            <Route path="/" element={<LoginOrRegister />} />
+            {/* <Route path="about" element={<About />} /> */}
+        </Routes>
     );
 }
 
