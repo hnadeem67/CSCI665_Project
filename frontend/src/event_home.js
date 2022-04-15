@@ -116,13 +116,6 @@ const footers = [
   },
 ];
 
-const actions = [
-  { icon: <FileCopyIcon />, name: 'Copy' },
-  { icon: <SaveIcon />, name: 'Save' },
-  { icon: <PrintIcon />, name: 'Print' },
-  { icon: <ShareIcon />, name: 'Share' },
-];
-
 export default function PricingContent() {
   return (
     <React.Fragment>
@@ -174,6 +167,9 @@ export default function PricingContent() {
       <Container maxWidth="md" component="main">
         <Box style={{ marginTop: 50 }} sx={{ flexGrow: 1 }}>
           <Grid container spacing={2}>
+
+            {/* Hamza's fitering/sorting component here */}
+
             {cardContent()}
             {cardContent()}
             {cardContent()}

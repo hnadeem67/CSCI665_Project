@@ -1,13 +1,5 @@
-<<<<<<< HEAD
 import logo from './logo.svg';
-import './App.css';
-import PricingContent from "./event_home";
-
-function App() {
-  return (
-    <PricingContent/>
-  );
-=======
+import EventHome from "./event_home";
 import { Routes, Route } from "react-router-dom";
 import "./App.css";
 
@@ -18,10 +10,10 @@ function App() {
     return (
         <Routes>
             <Route path="/" element={<LoginOrRegister />} />
+            <Route path="/event_home" element={<EventHome />} />
             {/* <Route path="about" element={<About />} /> */}
         </Routes>
     );
->>>>>>> a970763722c9b65fd9d117a68f1078b3df02a9da
 }
 
 export default App;
