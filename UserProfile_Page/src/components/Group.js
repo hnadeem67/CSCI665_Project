@@ -1,5 +1,3 @@
 export default function ({ children }) {
-    return <div className='group'>
-        {children}
-    </div>
+  return <div className="group">{children}</div>;
 }

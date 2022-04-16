@@ -9,11 +9,11 @@ const rootElement = document.getElementById("root");
 const root = createRoot(rootElement);
 
 root.render(
-    <AuthProvider>
-        <BrowserRouter>
-            <App />
-        </BrowserRouter>
-    </AuthProvider>
+  <AuthProvider>
+    <BrowserRouter>
+      <App />
+    </BrowserRouter>
+  </AuthProvider>
 );
 
 // If you want to start measuring performance in your app, pass a function
