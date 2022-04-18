@@ -115,7 +115,7 @@ export default function Homepage() {
             <Grid item xs={7} md={10}>
               <TextField
                 id="outlined-basic"
-                label="Search for Events"
+                label="Search for an Ideal Event"
                 variant="outlined"
                 fullWidth
               />
@@ -197,7 +197,7 @@ function CardContent(props) {
   const navigate = useNavigate();
 
   return (
-    <Grid item xs={4}>
+    <Grid item xs={6} md={4}>
       <Paper
         sx={{
           p: 2,
