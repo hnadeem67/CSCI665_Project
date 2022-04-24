@@ -70,7 +70,7 @@ export default function Homepage() {
             <Link
               variant="button"
               color="text.primary"
-              href="#"
+              href="/profile"
               sx={{ my: 1, mx: 1.5 }}
             >
               Profile
