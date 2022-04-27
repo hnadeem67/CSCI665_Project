@@ -9,6 +9,8 @@ import {
 } from "../utils/authentication/firebase";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { faker } from "@faker-js/faker";
+import List from "../components/search_function/List"
+
 
 import {
   AppBar,
@@ -33,6 +35,13 @@ export default function Homepage() {
   const navigate = useNavigate();
   const [user] = useAuthState(auth);
   const [events, setEvents] = useState([]);
+
+  const [inputText, setInputText] = useState("");
+  let inputHandler = (e) => {
+    //convert input text to lower case
+    var lowerCase = e.target.value.toLowerCase();
+    setInputText(lowerCase);
+  };
 
   useEffect(() => {
     async function fetchEventsFromFirebase() {
@@ -67,14 +76,14 @@ export default function Homepage() {
             Ideal Events
           </Typography>
           <Box style={{ display: "flex", alignItems: "center" }}>
-            <Link
+            <Button
               variant="button"
               color="text.primary"
               href="/profile"
               sx={{ my: 1, mx: 1.5 }}
             >
               Profile
-            </Link>
+            </Button>
             {user ? (
               <div>
                 <Button
@@ -115,11 +124,28 @@ export default function Homepage() {
             <Grid item xs={7} md={10}>
               <TextField
                 id="outlined-basic"
+                onChange={inputHandler}
                 label="Search for an Ideal Event"
                 variant="outlined"
                 fullWidth
               />
+            
+            {/*
+              data.filter(post => {
+                if (query === '') {
+                  return post;
+                } else if (data.title.toLowerCase().includes(query.toLowerCase())) {
+                  return post;
+                }
+              }).map((post, index) => (
+                <div className="box" key={index}>
+                  <p>{data.title}</p>
+                  <p>{data.description}</p>
+                </div>
+              ))
+              */}
             </Grid>
+            <List input={inputText} />
             <Grid item xs={5} md={2}>
               <ButtonGroup
                 variant="contained"
