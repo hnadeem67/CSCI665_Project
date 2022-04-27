@@ -60,11 +60,51 @@ export const signInWithGoogle = async () => {
   }
 };
 
+export const getUser = async () => {
+  try {
+    const { uid } = auth.currentUser;
+    const userRef = query(collection(db, "users"), where("uid", "==", uid));
+    const docs = await getDocs(userRef);
+    if (docs.docs.length === 0) {
+      throw new Error("user doesnt exist");
+    }
+    return docs.docs[0].data();
+  } catch (error) {
+    console.error(error);
+    return [];
+  }
+};
+
+/**   authProvider: "google"
+        bio: ""
+        email: "jjain04@nyit.edu"
+        eventsAttended: []
+        eventsCreated: []
+        favoriteConferenceType: ""
+        name: "Jahaan Jain"
+        profilePicture: "https://lh3.googleusercontent.com/a-/AOh14Ggmm7enR-l9RazxG89XVE2q9HsanjBNqlDIJCACYQ=s96-c"
+        uid: "jZ5jSO1szuXJIztaoMQEhlW8BzY2"
+   */
+const exampleUserObject = {
+  bio: "",
+  eventsAttended: [],
+  eventsCreated: [],
+  favoriteConferenceType: "",
+  name: "Jahaan Jain",
+};
+
 export const editUser = async (data) => {
   try {
     const { uid } = auth.currentUser;
-    const usersRef = doc(db, "users", uid);
-    await updateDoc(usersRef, {
+    const userRef = query(collection(db, "users"), where("uid", "==", uid));
+    const docs = await getDocs(userRef);
+    if (docs.docs.length === 0) {
+      throw new Error("user doesnt exist");
+    }
+    const documentId = docs.docs[0].id;
+
+    const usersRefEdit = doc(db, "users", documentId);
+    await updateDoc(usersRefEdit, {
       ...data,
     });
   } catch (error) {
