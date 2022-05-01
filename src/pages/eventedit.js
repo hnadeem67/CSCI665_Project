@@ -41,7 +41,14 @@ import LocalizationProvider from "@mui/lab/LocalizationProvider";
 import ImageUploading from "react-images-uploading";
 
 // event category list
-const CATE_LIST = ["None", "Ten", "Twenty", "Thirty", "Technology"];
+const CATE_LIST = [
+  "Technology",
+  "Business",
+  "Politics",
+  "Entertainment",
+  "Cooking",
+  "Sports",
+];
 
 export default function EventEdit() {
   const location = useLocation();
