@@ -1,11 +1,11 @@
 div.container {
   height: 100%;
-  display: grid;
-  background-color: lightgray;
+  padding: 150px;
+  background-color:blanchedalmond;
 }
 
 div.App {
-  background-color: white;
+  background-color:azure;
   padding: 2em 1em;
   margin: auto;
   width: 400px;
@@ -15,31 +15,19 @@ div.App {
 
 div.group {
   vertical-align: middle;
-  margin: 0.5em;
+  margin: 10px;
   height: 32px;
 }
 
-div.birthday {
-  font-size: x-large;
-  margin: 0.6em;
-}
-
-div.color-box {
-  position: relative;
-  top: 6px;
-  display: inline-block;
-  width: 50px;
-  height: 20px;
-  border: 1px solid darkgray;
-}
 
 label {
   margin: 0px;
 }
 
 h1 {
-  font-size: large;
-  margin: 0em 0.8em;
+  font-size: 50;
+  margin: 10px;
+
 }
 
 h2 {

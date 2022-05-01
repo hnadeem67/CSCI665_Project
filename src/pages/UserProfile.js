@@ -30,12 +30,8 @@ const Input = styled("input")({
 
 export default function EditableUserProfile({ stored, startEditCallback }) {
   return (
-    <div
-      style={{
-        backgroundImage: `url("https://previews.123rf.com/images/rokvel/rokvel1610/rokvel161001167/65260300-abstract-white-background-grau-farbe-vintage-grunge-texturen-und-hintergr%C3%BCnde-perfekt-mit-platz.jpg")`,
-      }}
-    >
-      <Avatar alt="Sample Image" src=" " sx={{ width: 56, height: 56 }} />
+    <div>
+      <Avatar alt="Profile Image" src={stored.profilePicture} sx={{ width: 100, height: 100 }} />
 
       <Stack>
         <label htmlFor="icon-button-file">
@@ -45,7 +41,7 @@ export default function EditableUserProfile({ stored, startEditCallback }) {
             aria-label="upload picture"
             component="span"
           >
-            <PhotoCamera />
+            <PhotoCamera /> 
           </IconButton>
         </label>
       </Stack>

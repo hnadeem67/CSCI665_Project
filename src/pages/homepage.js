@@ -6,10 +6,19 @@ import {
   logout,
   getEvents,
   createEvent,
+  query,
 } from "../utils/authentication/firebase";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { faker } from "@faker-js/faker";
 import List from "../components/search_function/List";
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import ListItemText from '@mui/material/ListItemText';
+import Check from '@mui/icons-material/Check';
+import MenuList from '@mui/material/MenuList';
+
+
 
 import {
   AppBar,
@@ -34,6 +43,15 @@ export default function Homepage() {
   const navigate = useNavigate();
   const [user] = useAuthState(auth);
   const [events, setEvents] = useState([]);
+
+  const [anchorEl, setAnchorEl] = React.useState(null);
+  const open = Boolean(anchorEl);
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
 
   const [inputText, setInputText] = useState("");
   let inputHandler = (e) => {
@@ -148,7 +166,35 @@ export default function Homepage() {
                 variant="contained"
                 aria-label="outlined primary button group"
               >
-                <Button>Filter</Button>
+                <Button
+                  id="basic-button"
+                  aria-controls={open ? 'basic-menu' : undefined}
+                  aria-haspopup="true"
+                  aria-expanded={open ? 'true' : undefined}
+                  onClick={handleClick}
+                >
+                  Sort
+                </Button>
+                <Menu
+                  id="basic-menu"
+                  anchorEl={anchorEl}
+                  open={open}
+                  onClose={handleClose}
+                  MenuListProps={{
+                    'aria-labelledby': 'basic-button',
+                  }}
+                >
+                    <MenuItem onClick={handleClose}>
+                      <ListItemText inset>By Attendees</ListItemText>
+                    </MenuItem>
+                    <MenuItem onClick={handleClose}>
+                      <ListItemText inset>By Date of Events</ListItemText>
+                    </MenuItem>
+                    <MenuItem onClick={handleClose}>
+                      <ListItemText inset>By Category</ListItemText>
+                    </MenuItem>
+                </Menu>
+              
                 <Button>Sort</Button>
               </ButtonGroup>
             </Grid>

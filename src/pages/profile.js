@@ -26,6 +26,7 @@ function App() {
   const [item2, setItem2] = useState(randomItem());
   const [item3, setItem3] = useState(randomItem());
   const [email, setEmail] = useState(user?.email);
+  const [profilePicture, setPicture] = useState(user?.profilePicture);
 
   /**   authProvider: "google"
         bio: ""
@@ -38,7 +39,7 @@ function App() {
         uid: "jZ5jSO1szuXJIztaoMQEhlW8BzY2"
    */
 
-  const stored = { name, color, bio, item1, item2, item3, email };
+  const stored = { name, color, bio, item1, item2, item3, email, profilePicture };
 
   function handleEditComplete(result) {
     console.log("handleEditComplete", result);
@@ -50,6 +51,7 @@ function App() {
       setItem2(result.item2);
       setItem3(result.item3);
       setEmail(result.email);
+      setPicture(result.profilePicture);
       const userUpdateData = {
         name: result.name,
         bio: result.bio,
@@ -73,7 +75,7 @@ function App() {
             </>
           ) : (
             <>
-              <h1>Welcome User</h1>
+              <h1>Welcome {stored.name} </h1>
               <UserProfile
                 stored={stored}
                 startEditCallback={() => setEditMode(true)}
