@@ -117,4 +117,23 @@ export const createEvent = async (data) => {
   }
 };
 
+export const getOrganizerInfo = async (eventId = "") => {
+  // Retrieve the event organizer's info based on the eventId
+  // Use only in the event detail page (I guess)
+
+  try {
+    const q = query(collection(db, "events"), where("eventId", "==", eventId));
+    const docs = await getDocs(q);
+    let q_data = docs.docs[0].data();
+
+    const r = query(collection(db, "users"), where("uid", "==", q_data.organizer));
+    const docs_ = await getDocs(r);
+    console.log(docs_);
+    return docs_.docs[0].data();
+  } catch (error) {
+    console.error(error);
+    return null;
+  }
+};
+
 export const logout = () => signOut(auth);

@@ -6,6 +6,7 @@ import {
   logout,
   getEvent,
   createEvent,
+  getOrganizerInfo,
 } from "../utils/authentication/firebase";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { faker } from "@faker-js/faker";
@@ -26,11 +27,13 @@ import {
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import AddIcon from "@mui/icons-material/Add";
+import EditIcon from '@mui/icons-material/Edit';
 
 export default function Event() {
   const navigate = useNavigate();
   const [user] = useAuthState(auth);
   const [event, setEvent] = useState(null);
+  const [organizer, setOrganizer] = useState(null);
 
   const eventId = window.location.pathname.split("/")[2] || null;
 
@@ -41,11 +44,13 @@ export default function Event() {
       }
       console.log(eventId);
       const event = await getEvent(eventId);
+      const organizer = await getOrganizerInfo(eventId);
       if (!event) {
         return navigate("/?error=EVENT_NOT_FOUND");
       }
       console.log(event);
       setEvent(event);
+      setOrganizer(organizer);
     }
     fetchEventFromFirebase();
   }, [eventId, navigate]);
@@ -109,41 +114,64 @@ export default function Event() {
       {/* End hero unit */}
       <Container maxWidth="xl" component="main" sx={{ mt: 5, mb: 3 }}>
         {event && <CardContent event={event} />}
+        {organizer && (<OrganizerInfo organizer={organizer} />)}
       </Container>
 
       {/* Add event button */}
       {user && (
-        <Fab
-          style={{
-            margin: 0,
-            top: "auto",
-            left: "auto",
-            bottom: 20,
-            right: 20,
-            position: "fixed",
-          }}
-          color="primary"
-          aria-label="add"
-          // for now create dummy event for testing
-          onClick={() =>
-            createEvent({
-              title: faker.company.companyName(),
-              description: faker.lorem.paragraph(),
-              category: "Technology",
-              location: faker.address.streetAddress(true),
-              image: `${faker.image.city()}?random=${Math.round(
-                Math.random() * 1000
-              )}`,
-              dateOfEvent: `${new Date(
-                new Date().getTime() +
+        <div>
+          <Fab
+            style={{
+              margin: 0,
+              top: "auto",
+              left: "auto",
+              bottom: 20,
+              right: 20,
+              position: "fixed",
+            }}
+            color="primary"
+            aria-label="add"
+            // for now create dummy event for testing
+            onClick={() =>
+              createEvent({
+                title: faker.company.companyName(),
+                description: faker.lorem.paragraph(),
+                category: "Technology",
+                location: faker.address.streetAddress(true),
+                image: `${faker.image.city()}?random=${Math.round(
+                  Math.random() * 1000
+                )}`,
+                dateOfEvent: `${new Date(
+                  new Date().getTime() +
                   faker.datatype.number({ min: 10, max: 100 }) * 86400000
-              )}`,
-              organizer: user.uid,
-            })
-          }
-        >
-          <AddIcon />
-        </Fab>
+                )}`,
+                organizer: user.uid,
+              })
+            }
+          >
+            <AddIcon />
+          </Fab>
+
+          {/* Edit event button */}
+          <Fab
+            style={{
+              margin: 0,
+              top: "auto",
+              left: "auto",
+              bottom: 90,
+              right: 20,
+              position: "fixed",
+            }}
+            color="secondary"
+            aria-label="edit"
+            // for now create dummy event for testing
+            onClick={() =>
+              navigate(`/event/${eventId}/edit`, {state: {event: event, type: 0 }})
+            }
+          >
+            <EditIcon />
+          </Fab>
+        </div>
       )}
     </React.Fragment>
   );
@@ -191,6 +219,9 @@ function CardContent(props) {
               backgroundPosition: "center",
             }}
           >
+            <Typography gutterBottom variant="h4" component="div">
+              Event Details
+            </Typography>
             <Img
               alt="complex"
               src={image}
@@ -240,4 +271,41 @@ function CardContent(props) {
       </Paper>
     </Grid>
   );
+}
+
+function OrganizerInfo(props) {
+  const {
+    bio,
+    email,
+    name,
+    profilePicture,
+  } = props.organizer;
+
+  return (
+    <Grid item xs={12}>
+      <Paper
+        sx={{
+          p: 2,
+          margin: "auto",
+          maxWidth: 800,
+          flexGrow: 1,
+          marginTop: 5,
+          backgroundColor: (theme) =>
+            theme.palette.mode === "dark" ? "#1A2027" : "#fff",
+        }}
+        elevation={2}
+      >
+        <Typography gutterBottom variant="h4" component="div">
+          Event Organizer
+        </Typography>
+        <hr />
+        <b>Name:</b> {name}
+        <br/>
+        <b>Email:</b> {email}
+        <br/>
+        {(bio).length < 1 ? (<div><b>Bio:</b> N/A</div>) : (<div><b>Bio:</b> {bio}</div>)}
+      </Paper>
+    </Grid>
+  );
+
 }
