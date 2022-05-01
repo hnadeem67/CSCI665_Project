@@ -6,10 +6,12 @@ import {
   logout,
   getEvent,
   createEvent,
+  addAttendeeToEvent,
+  removeAttendeeFromEvent,
+  getNamesOfAttendees,
   getOrganizerInfo,
 } from "../utils/authentication/firebase";
 import { useAuthState } from "react-firebase-hooks/auth";
-import { faker } from "@faker-js/faker";
 
 import {
   AppBar,
@@ -24,16 +26,20 @@ import {
   GlobalStyles,
   Fab,
   Box,
+  List,
+  ListItem,
+  ListItemText,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import AddIcon from "@mui/icons-material/Add";
-import EditIcon from '@mui/icons-material/Edit';
+import EditIcon from "@mui/icons-material/Edit";
 
 export default function Event() {
   const navigate = useNavigate();
   const [user] = useAuthState(auth);
   const [event, setEvent] = useState(null);
   const [organizer, setOrganizer] = useState(null);
+  const [attendeeNames, setAttendeeNames] = useState([]);
 
   const eventId = window.location.pathname.split("/")[2] || null;
 
@@ -42,15 +48,17 @@ export default function Event() {
       if (!eventId) {
         return navigate("/?error=MISSING_EVENT_ID");
       }
-      console.log(eventId);
+      // console.log(eventId);
       const event = await getEvent(eventId);
       const organizer = await getOrganizerInfo(eventId);
+      const attendeeNames = await getNamesOfAttendees(eventId);
       if (!event) {
         return navigate("/?error=EVENT_NOT_FOUND");
       }
-      console.log(event);
+      // console.log(event);
       setEvent(event);
       setOrganizer(organizer);
+      setAttendeeNames(attendeeNames);
     }
     fetchEventFromFirebase();
   }, [eventId, navigate]);
@@ -78,14 +86,14 @@ export default function Event() {
             Ideal Events
           </Typography>
           <Box style={{ display: "flex", alignItems: "center" }}>
-            <Link
+            <Button
               variant="button"
               color="text.primary"
-              href="#"
+              onClick={() => navigate("/profile")}
               sx={{ my: 1, mx: 1.5 }}
             >
               Profile
-            </Link>
+            </Button>
             {user ? (
               <div>
                 <Button
@@ -113,64 +121,66 @@ export default function Event() {
 
       {/* End hero unit */}
       <Container maxWidth="xl" component="main" sx={{ mt: 5, mb: 3 }}>
-        {event && <CardContent event={event} />}
-        {organizer && (<OrganizerInfo organizer={organizer} />)}
+        {event && (
+          <CardContent
+            event={event}
+            setEvent={setEvent}
+            user={user}
+            attendeeNames={attendeeNames}
+          />
+        )}
+        {organizer && <OrganizerInfo organizer={organizer} />}
       </Container>
 
       {/* Add event button */}
       {user && (
         <div>
-          <Fab
-            style={{
-              margin: 0,
-              top: "auto",
-              left: "auto",
-              bottom: 20,
-              right: 20,
-              position: "fixed",
-            }}
-            color="primary"
-            aria-label="add"
-            // for now create dummy event for testing
-            onClick={() =>
-              createEvent({
-                title: faker.company.companyName(),
-                description: faker.lorem.paragraph(),
-                category: "Technology",
-                location: faker.address.streetAddress(true),
-                image: `${faker.image.city()}?random=${Math.round(
-                  Math.random() * 1000
-                )}`,
-                dateOfEvent: `${new Date(
-                  new Date().getTime() +
-                  faker.datatype.number({ min: 10, max: 100 }) * 86400000
-                )}`,
-                organizer: user.uid,
-              })
-            }
-          >
-            <AddIcon />
-          </Fab>
+          {user && (
+            <Fab
+              style={{
+                margin: 0,
+                top: "auto",
+                left: "auto",
+                bottom: 20,
+                right: 20,
+                position: "fixed",
+              }}
+              color="primary"
+              aria-label="add"
+              // for now create dummy event for testing
+              onClick={() =>
+                navigate(`/event/create`, {
+                  state: { type: 1 },
+                })
+              }
+            >
+              <AddIcon />
+            </Fab>
+          )}
 
           {/* Edit event button */}
-          <Fab
-            style={{
-              margin: 0,
-              top: "auto",
-              left: "auto",
-              bottom: 90,
-              right: 20,
-              position: "fixed",
-            }}
-            color="secondary"
-            aria-label="edit"
-            // for now create dummy event for testing
-            onClick={() =>
-              navigate(`/event/${eventId}/edit`, {state: {event: event, type: 0 }})
-            }
-          >
-            <EditIcon />
-          </Fab>
+          {event && user && event.organizer === user.uid && (
+            <Fab
+              style={{
+                margin: 0,
+                top: "auto",
+                left: "auto",
+                bottom: 90,
+                right: 20,
+                position: "fixed",
+              }}
+              color="secondary"
+              aria-label="edit"
+              // for now create dummy event for testing
+              onClick={() =>
+                navigate(`/event/${eventId}/edit`, {
+                  state: { event, type: 0 },
+                })
+              }
+            >
+              <EditIcon />
+            </Fab>
+          )}
         </div>
       )}
     </React.Fragment>
@@ -193,6 +203,8 @@ function CardContent(props) {
     location,
     image,
     dateOfEvent,
+    eventId,
+    organizer,
   } = props.event;
 
   return (
@@ -254,6 +266,70 @@ function CardContent(props) {
                 <Typography variant="body2" color="text.secondary">
                   Attendees: {attendees.length}
                 </Typography>
+                {props.user &&
+                  !attendees.includes(props.user.uid) &&
+                  organizer !== props.user.uid && (
+                    <Button
+                      variant="outlined"
+                      color="primary"
+                      onClick={() =>
+                        addAttendeeToEvent({
+                          eventId,
+                          userId: props.user.uid,
+                        }).then(() => {
+                          props.setEvent({
+                            ...props.event,
+                            attendees: [...attendees, props.user.uid],
+                          });
+                        })
+                      }
+                    >
+                      I'm attending
+                    </Button>
+                  )}
+                {props.user &&
+                  attendees.includes(props.user.uid) &&
+                  organizer !== props.user.uid && (
+                    <Button
+                      variant="outlined"
+                      color="primary"
+                      onClick={() =>
+                        removeAttendeeFromEvent({
+                          eventId,
+                          userId: props.user.uid,
+                        }).then(() => {
+                          props.setEvent({
+                            ...props.event,
+                            attendees: attendees.filter(
+                              (attendee) => attendee !== props.user.uid
+                            ),
+                          });
+                        })
+                      }
+                    >
+                      I'm not attending
+                    </Button>
+                  )}
+                {props.user && organizer === props.user.uid && (
+                  <Box>
+                    <Typography variant="h6">Attendee List</Typography>
+                    <List sx={{ py: 0 }}>
+                      {props.attendeeNames && props.attendeeNames.length > 0 ? (
+                        <>
+                          {props.attendeeNames.map((attendee) => (
+                            <ListItem key={attendee} sx={{ py: 0 }}>
+                              <ListItemText primary={attendee} />
+                            </ListItem>
+                          ))}
+                        </>
+                      ) : (
+                        <ListItem>
+                          <ListItemText primary="No attendees yet" />
+                        </ListItem>
+                      )}
+                    </List>
+                  </Box>
+                )}
               </Grid>
               <Grid item>
                 <Typography style={{ marginTop: -5 }} variant="body2">
@@ -274,12 +350,7 @@ function CardContent(props) {
 }
 
 function OrganizerInfo(props) {
-  const {
-    bio,
-    email,
-    name,
-    profilePicture,
-  } = props.organizer;
+  const { bio, email, name, profilePicture } = props.organizer;
 
   return (
     <Grid item xs={12}>
@@ -300,12 +371,19 @@ function OrganizerInfo(props) {
         </Typography>
         <hr />
         <b>Name:</b> {name}
-        <br/>
+        <br />
         <b>Email:</b> {email}
-        <br/>
-        {(bio).length < 1 ? (<div><b>Bio:</b> N/A</div>) : (<div><b>Bio:</b> {bio}</div>)}
+        <br />
+        {bio.length < 1 ? (
+          <div>
+            <b>Bio:</b> N/A
+          </div>
+        ) : (
+          <div>
+            <b>Bio:</b> {bio}
+          </div>
+        )}
       </Paper>
     </Grid>
   );
-
 }

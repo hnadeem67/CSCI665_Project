@@ -10,7 +10,7 @@ export const AuthProvider = ({ children }) => {
     auth.onAuthStateChanged(async (user) => {
       if (user) {
         const userDoc = await getUser();
-        console.log(userDoc);
+        // console.log(userDoc);
         setUser(userDoc);
       }
     });

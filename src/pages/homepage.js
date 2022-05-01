@@ -11,14 +11,12 @@ import {
 import { useAuthState } from "react-firebase-hooks/auth";
 import { faker } from "@faker-js/faker";
 import List from "../components/search_function/List";
-import Menu from '@mui/material/Menu';
-import MenuItem from '@mui/material/MenuItem';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import ListItemText from '@mui/material/ListItemText';
-import Check from '@mui/icons-material/Check';
-import MenuList from '@mui/material/MenuList';
-
-
+import Menu from "@mui/material/Menu";
+import MenuItem from "@mui/material/MenuItem";
+import ListItemIcon from "@mui/material/ListItemIcon";
+import ListItemText from "@mui/material/ListItemText";
+import Check from "@mui/icons-material/Check";
+import MenuList from "@mui/material/MenuList";
 
 import {
   AppBar,
@@ -168,9 +166,9 @@ export default function Homepage() {
               >
                 <Button
                   id="basic-button"
-                  aria-controls={open ? 'basic-menu' : undefined}
+                  aria-controls={open ? "basic-menu" : undefined}
                   aria-haspopup="true"
-                  aria-expanded={open ? 'true' : undefined}
+                  aria-expanded={open ? "true" : undefined}
                   onClick={handleClick}
                 >
                   Sort
@@ -181,20 +179,20 @@ export default function Homepage() {
                   open={open}
                   onClose={handleClose}
                   MenuListProps={{
-                    'aria-labelledby': 'basic-button',
+                    "aria-labelledby": "basic-button",
                   }}
                 >
-                    <MenuItem onClick={handleClose}>
-                      <ListItemText inset>By Attendees</ListItemText>
-                    </MenuItem>
-                    <MenuItem onClick={handleClose}>
-                      <ListItemText inset>By Date of Events</ListItemText>
-                    </MenuItem>
-                    <MenuItem onClick={handleClose}>
-                      <ListItemText inset>By Category</ListItemText>
-                    </MenuItem>
+                  <MenuItem onClick={handleClose}>
+                    <ListItemText inset>By Attendees</ListItemText>
+                  </MenuItem>
+                  <MenuItem onClick={handleClose}>
+                    <ListItemText inset>By Date of Events</ListItemText>
+                  </MenuItem>
+                  <MenuItem onClick={handleClose}>
+                    <ListItemText inset>By Category</ListItemText>
+                  </MenuItem>
                 </Menu>
-              
+
                 <Button>Sort</Button>
               </ButtonGroup>
             </Grid>
@@ -222,19 +220,8 @@ export default function Homepage() {
           aria-label="add"
           // for now create dummy event for testing
           onClick={() =>
-            createEvent({
-              title: faker.company.companyName(),
-              description: faker.lorem.paragraph(),
-              category: "Technology",
-              location: faker.address.streetAddress(true),
-              image: `${faker.image.city()}?random=${Math.round(
-                Math.random() * 1000
-              )}`,
-              dateOfEvent: `${new Date(
-                new Date().getTime() +
-                  faker.datatype.number({ min: 10, max: 100 }) * 86400000
-              )}`,
-              organizer: user.uid,
+            navigate(`/event/create`, {
+              state: { type: 1 },
             })
           }
         >

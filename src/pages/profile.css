@@ -1,13 +1,16 @@
+body {
+  background-color: blanchedalmond;
+}
+
 div.container {
-  height: 100%;
-  padding: 150px;
-  background-color:blanchedalmond;
+  height: 100vh;
 }
 
 div.App {
-  background-color:azure;
+  background-color: azure;
   padding: 2em 1em;
   margin: auto;
+  margin-top: 2em;
   width: 400px;
   border-radius: 1em;
   box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.205);
@@ -19,7 +22,6 @@ div.group {
   height: 32px;
 }
 
-
 label {
   margin: 0px;
 }
@@ -27,7 +29,6 @@ label {
 h1 {
   font-size: 50;
   margin: 10px;
-
 }
 
 h2 {
