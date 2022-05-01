@@ -9,6 +9,7 @@ import {
 } from "../utils/authentication/firebase";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { faker } from "@faker-js/faker";
+import List from "../components/search_function/List";
 
 import {
   AppBar,
@@ -34,12 +35,28 @@ export default function Homepage() {
   const [user] = useAuthState(auth);
   const [events, setEvents] = useState([]);
 
+  const [inputText, setInputText] = useState("");
+  let inputHandler = (e) => {
+    //convert input text to lower case
+    var lowerCase = e.target.value.toLowerCase();
+    setInputText(lowerCase);
+  };
+
+  const submitHandler = async () => {
+    const allEvents = await getEvents();
+    if (inputText.length === 0) return setEvents(allEvents);
+    const newEvents = allEvents.filter((x) =>
+      x.title.toLowerCase().includes(inputText.toLowerCase())
+    );
+    setEvents(newEvents);
+  };
+
+  async function fetchEventsFromFirebase() {
+    const events = await getEvents();
+    setEvents(events);
+  }
+
   useEffect(() => {
-    async function fetchEventsFromFirebase() {
-      const events = await getEvents();
-      console.log(events);
-      setEvents(events);
-    }
     fetchEventsFromFirebase();
     // if (user) navigate("/events");
   }, []);
@@ -67,14 +84,14 @@ export default function Homepage() {
             Ideal Events
           </Typography>
           <Box style={{ display: "flex", alignItems: "center" }}>
-            <Link
+            <Button
               variant="button"
               color="text.primary"
-              href="/profile"
+              onClick={() => navigate("/profile")}
               sx={{ my: 1, mx: 1.5 }}
             >
               Profile
-            </Link>
+            </Button>
             {user ? (
               <div>
                 <Button
@@ -115,6 +132,12 @@ export default function Homepage() {
             <Grid item xs={7} md={10}>
               <TextField
                 id="outlined-basic"
+                onChange={inputHandler}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    submitHandler();
+                  }
+                }}
                 label="Search for an Ideal Event"
                 variant="outlined"
                 fullWidth
