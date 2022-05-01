@@ -67,6 +67,24 @@ export default function Homepage() {
     setEvents(newEvents);
   };
 
+  const sortByAttendeesLowestFirst = async () => {
+    const allEvents = await getEvents();
+    if (inputText.length === 0) return setEvents(allEvents);
+    const newEvents = allEvents.sort(
+      (x, y) => x.attendees.length - y.attendees.length
+    ); // for high to low, switch x and y
+    setEvents(newEvents);
+  };
+
+  const sortByDateOfEventOldestFirst = async () => {
+    const allEvents = await getEvents();
+    if (inputText.length === 0) return setEvents(allEvents);
+    const newEvents = allEvents.sort(
+      (x, y) => new Date(x.dateOfEvent) - new Date(y.dateOfEvent)
+    ); // for recent to oldest, switch x and y
+    setEvents(newEvents);
+  };
+
   async function fetchEventsFromFirebase() {
     const events = await getEvents();
     setEvents(events);
