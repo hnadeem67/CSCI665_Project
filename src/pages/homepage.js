@@ -17,6 +17,9 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import Check from "@mui/icons-material/Check";
 import MenuList from "@mui/material/MenuList";
+import FormControl from "@mui/material/FormControl";
+import InputLabel from "@mui/material/InputLabel";
+import Select, { SelectChangeEvent } from "@mui/material/Select";
 
 import {
   AppBar,
@@ -36,22 +39,41 @@ import {
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import AddIcon from "@mui/icons-material/Add";
+import { async } from "@firebase/util";
+
+const CATE_LIST = [
+  "Technology",
+  "Business",
+  "Politics",
+  "Entertainment",
+  "Cooking",
+  "Sports",
+];
 
 export default function Homepage() {
   const navigate = useNavigate();
   const [user] = useAuthState(auth);
   const [events, setEvents] = useState([]);
-
+  const [cate, setCate] = React.useState("");
   const [anchorEl, setAnchorEl] = React.useState(null);
+  const [anchorEl2, setAnchorEl2] = React.useState(null);
   const open = Boolean(anchorEl);
+  const open2 = Boolean(anchorEl2);
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
+  };
+  const handleClick2 = (event) => {
+    setAnchorEl2(event.currentTarget);
   };
   const handleClose = () => {
     setAnchorEl(null);
   };
+  const handleClose2 = () => {
+    setAnchorEl2(null);
+  };
 
   const [inputText, setInputText] = useState("");
+
   let inputHandler = (e) => {
     //convert input text to lower case
     var lowerCase = e.target.value.toLowerCase();
@@ -68,21 +90,35 @@ export default function Homepage() {
   };
 
   const sortByAttendeesLowestFirst = async () => {
+    console.log('test')
     const allEvents = await getEvents();
-    if (inputText.length === 0) return setEvents(allEvents);
+    console.log(allEvents)
+    if (allEvents.length === 0) return setEvents(allEvents);
     const newEvents = allEvents.sort(
-      (x, y) => x.attendees.length - y.attendees.length
+      (x, y) => y.attendees.length - x.attendees.length
     ); // for high to low, switch x and y
+    console.log(newEvents)
     setEvents(newEvents);
+    
   };
 
   const sortByDateOfEventOldestFirst = async () => {
     const allEvents = await getEvents();
-    if (inputText.length === 0) return setEvents(allEvents);
+    if (allEvents.length === 0) return setEvents(allEvents);
     const newEvents = allEvents.sort(
       (x, y) => new Date(x.dateOfEvent) - new Date(y.dateOfEvent)
     ); // for recent to oldest, switch x and y
+    console.log(newEvents)
     setEvents(newEvents);
+    };
+
+  const clear = async () => {
+    const allEvents = await getEvents();
+    setEvents(allEvents);
+  }
+
+  const categoryHandler = (event) => {
+    setCate(event.target.value);
   };
 
   async function fetchEventsFromFirebase() {
@@ -200,18 +236,59 @@ export default function Homepage() {
                     "aria-labelledby": "basic-button",
                   }}
                 >
-                  <MenuItem onClick={handleClose}>
+                  <MenuItem onClick={sortByAttendeesLowestFirst}>
                     <ListItemText inset>By Attendees</ListItemText>
                   </MenuItem>
-                  <MenuItem onClick={handleClose}>
+                  <MenuItem onClick={sortByDateOfEventOldestFirst}>
                     <ListItemText inset>By Date of Events</ListItemText>
                   </MenuItem>
-                  <MenuItem onClick={handleClose}>
-                    <ListItemText inset>By Category</ListItemText>
+                  <MenuItem onClick={clear}>
+                    <ListItemText inset>Clear</ListItemText>
                   </MenuItem>
                 </Menu>
 
-                <Button>Sort</Button>
+                <Button
+                  id="basic-button"
+                  aria-controls={open2 ? "basic-menu" : undefined}
+                  aria-haspopup="true"
+                  aria-expanded={open2 ? "true" : undefined}
+                  onClick={handleClick2}
+                >
+                  Filter
+                </Button>
+                <Menu
+                  id="basic-menu"
+                  anchorEl1={anchorEl2}
+                  open={open2}
+                  onClose={handleClose2}
+                  MenuListProps={{
+                    "aria-labelledby": "basic-button",
+                  }}
+                >
+                  <MenuItem >
+                  <FormControl fullWidth>
+                        <InputLabel id="demo-simple-select-helper-label">
+                          Category
+                        </InputLabel>
+                        <Select
+                          labelId="demo-simple-select-helper-label"
+                          id="demo-simple-select-helper"
+                          value={cate}
+                          label="Category"
+                          onChange={categoryHandler}
+                        >
+                          {CATE_LIST.map((_cate) => (
+                            <MenuItem value={_cate} key={_cate}>
+                              {_cate}
+                            </MenuItem>
+                          ))}
+                        </Select>
+                      </FormControl>
+                  </MenuItem>
+                  <MenuItem onClick={clear}>
+                    <ListItemText inset>Clear</ListItemText>
+                  </MenuItem>
+                </Menu>
               </ButtonGroup>
             </Grid>
           </Grid>
