@@ -63,7 +63,6 @@ function App() {
       setItem2(result.item2);
       setItem3(result.item3);
       setEmail(result.email);
-      setPicture(result.profilePicture);
       const userUpdateData = {
         name: result.name,
         bio: result.bio,

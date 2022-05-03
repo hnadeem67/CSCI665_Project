@@ -350,6 +350,7 @@ function CardContent(props) {
 }
 
 function OrganizerInfo(props) {
+  const [user] = useAuthState(auth);
   const { bio, email, name, profilePicture } = props.organizer;
 
   return (
@@ -372,7 +373,8 @@ function OrganizerInfo(props) {
         <hr />
         <b>Name:</b> {name}
         <br />
-        <b>Email:</b> {email}
+        <b>Email:</b>{" "}
+        {user ? email : "You must be logged in to view this information"}
         <br />
         {bio.length < 1 ? (
           <div>

@@ -90,16 +90,27 @@ export default function Homepage() {
   };
 
   const sortByAttendeesLowestFirst = async () => {
-    console.log('test')
+    console.log("test");
     const allEvents = await getEvents();
-    console.log(allEvents)
+    console.log(allEvents);
     if (allEvents.length === 0) return setEvents(allEvents);
     const newEvents = allEvents.sort(
       (x, y) => y.attendees.length - x.attendees.length
     ); // for high to low, switch x and y
-    console.log(newEvents)
+    console.log(newEvents);
     setEvents(newEvents);
-    
+  };
+
+  const sortByAttendeesHighestFirst = async () => {
+    console.log("test");
+    const allEvents = await getEvents();
+    console.log(allEvents);
+    if (allEvents.length === 0) return setEvents(allEvents);
+    const newEvents = allEvents.sort(
+      (x, y) => x.attendees.length - y.attendees.length
+    );
+    console.log(newEvents);
+    setEvents(newEvents);
   };
 
   const sortByDateOfEventOldestFirst = async () => {
@@ -108,14 +119,24 @@ export default function Homepage() {
     const newEvents = allEvents.sort(
       (x, y) => new Date(x.dateOfEvent) - new Date(y.dateOfEvent)
     ); // for recent to oldest, switch x and y
-    console.log(newEvents)
+    console.log(newEvents);
     setEvents(newEvents);
-    };
+  };
+
+  const sortByDateUpcomingEvents = async () => {
+    const allEvents = await getEvents();
+    if (allEvents.length === 0) return setEvents(allEvents);
+    const newEvents = allEvents
+      .sort((x, y) => new Date(x.dateOfEvent) - new Date(y.dateOfEvent))
+      .filter((x) => new Date(x.dateOfEvent) > new Date()); // for recent to oldest, switch x and y
+    console.log(newEvents);
+    setEvents(newEvents);
+  };
 
   const clear = async () => {
     const allEvents = await getEvents();
     setEvents(allEvents);
-  }
+  };
 
   const categoryHandler = (event) => {
     setCate(event.target.value);
@@ -199,7 +220,7 @@ export default function Homepage() {
             justifyContent="space-between"
             alignItems="center"
           >
-            <Grid item xs={7} md={10}>
+            <Grid item xs={10} md={11}>
               <TextField
                 id="outlined-basic"
                 onChange={inputHandler}
@@ -213,10 +234,11 @@ export default function Homepage() {
                 fullWidth
               />
             </Grid>
-            <Grid item xs={5} md={2}>
+            <Grid item xs={2} md={1}>
               <ButtonGroup
                 variant="contained"
                 aria-label="outlined primary button group"
+                fullWidth
               >
                 <Button
                   id="basic-button"
@@ -224,6 +246,7 @@ export default function Homepage() {
                   aria-haspopup="true"
                   aria-expanded={open ? "true" : undefined}
                   onClick={handleClick}
+                  fullWidth
                 >
                   Sort
                 </Button>
@@ -237,17 +260,23 @@ export default function Homepage() {
                   }}
                 >
                   <MenuItem onClick={sortByAttendeesLowestFirst}>
-                    <ListItemText inset>By Attendees</ListItemText>
+                    <ListItemText inset>Attendees: Low to High</ListItemText>
+                  </MenuItem>
+                  <MenuItem onClick={sortByAttendeesHighestFirst}>
+                    <ListItemText inset>Attendees: High to Low</ListItemText>
                   </MenuItem>
                   <MenuItem onClick={sortByDateOfEventOldestFirst}>
-                    <ListItemText inset>By Date of Events</ListItemText>
+                    <ListItemText inset>Oldest Events</ListItemText>
+                  </MenuItem>
+                  <MenuItem onClick={sortByDateUpcomingEvents}>
+                    <ListItemText inset>Upcoming Events</ListItemText>
                   </MenuItem>
                   <MenuItem onClick={clear}>
                     <ListItemText inset>Clear</ListItemText>
                   </MenuItem>
                 </Menu>
 
-                <Button
+                {/* <Button
                   id="basic-button"
                   aria-controls={open2 ? "basic-menu" : undefined}
                   aria-haspopup="true"
@@ -255,7 +284,7 @@ export default function Homepage() {
                   onClick={handleClick2}
                 >
                   Filter
-                </Button>
+                </Button> */}
                 <Menu
                   id="basic-menu"
                   anchorEl1={anchorEl2}
@@ -265,25 +294,25 @@ export default function Homepage() {
                     "aria-labelledby": "basic-button",
                   }}
                 >
-                  <MenuItem >
-                  <FormControl fullWidth>
-                        <InputLabel id="demo-simple-select-helper-label">
-                          Category
-                        </InputLabel>
-                        <Select
-                          labelId="demo-simple-select-helper-label"
-                          id="demo-simple-select-helper"
-                          value={cate}
-                          label="Category"
-                          onChange={categoryHandler}
-                        >
-                          {CATE_LIST.map((_cate) => (
-                            <MenuItem value={_cate} key={_cate}>
-                              {_cate}
-                            </MenuItem>
-                          ))}
-                        </Select>
-                      </FormControl>
+                  <MenuItem>
+                    <FormControl fullWidth>
+                      <InputLabel id="demo-simple-select-helper-label">
+                        Category
+                      </InputLabel>
+                      <Select
+                        labelId="demo-simple-select-helper-label"
+                        id="demo-simple-select-helper"
+                        value={cate}
+                        label="Category"
+                        onChange={categoryHandler}
+                      >
+                        {CATE_LIST.map((_cate) => (
+                          <MenuItem value={_cate} key={_cate}>
+                            {_cate}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
                   </MenuItem>
                   <MenuItem onClick={clear}>
                     <ListItemText inset>Clear</ListItemText>
